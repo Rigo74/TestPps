@@ -1,22 +1,20 @@
-name: Pull-request-ci
+name: JustCards CI
 
-on: pull_request
+on: [pull_request, push]
 
 jobs:
-  test:
-    name: Test with Java
+  build:
+    name: JustCards Build and Tests
     strategy:
-      matrix:
-        java_ver: [1.8, 11, 13]
-        os: [ubunt-latest, windows-latest, ubuntu-16.04]
+       matrix:
+         java_version: [11]
+         os: [ubuntu-18.04, windows-2019, macOS-10.14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
-      - name: Setup java
+      - name: Install Java version
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java_ver }}
-      - name: Build with Gradle
-        run: ./gradlew build
-      
-    
+          java-version: ${{ matrix.java_version }}
+      - name: Gradle build and test system
+        run: ./gradlew clean build 
