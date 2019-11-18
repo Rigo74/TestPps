@@ -4,6 +4,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.{ActorRef, ActorSystem, PoisonPill}
 import akka.testkit.{TestKit, TestProbe}
+import org.justcards.client.Server.ServerReady
 import org.justcards.client.connection_manager.ConnectionManager.InitializeConnection
 import org.justcards.client.connection_manager.TcpConnectionManager
 import org.justcards.commons.AppError._
@@ -103,7 +104,8 @@ class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAft
     val testProbe = TestProbe()
     val testActor: ActorRef = testProbe.ref
     val serverAddress = getNewServerAddress
-    system.actorOf(Server(serverAddress, SimpleConnectionHandler(testActor)))
+    system.actorOf(Server(serverAddress, SimpleConnectionHandler(testActor), testActor))
+    testProbe expectMsg ServerReady
     val appController = system.actorOf(TestAppController(testActor))
     val connectionManager = system.actorOf(TcpConnectionManager(serverAddress)(appController))
     connectionManager ! InitializeConnection
