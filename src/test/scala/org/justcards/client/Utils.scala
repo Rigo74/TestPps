@@ -140,7 +140,9 @@ object TestAppController {
   def apply(testActor: ActorRef) = Props(classOf[TestAppController], testActor)
   private[this] class TestAppController(testActor: ActorRef) extends Actor {
     override def receive: Receive = {
-      case m => testActor ! m
+      case m =>
+        println("Test (testActor = " + testActor + ", TEST_APP_CONTROLLER = " + self + ") : AC received message " + m)
+        testActor ! m
     }
   }
 }
