@@ -109,12 +109,20 @@ object SimpleConnectionHandler {
   private[this] abstract class SimpleConnectionHandlerImpl(connection: ActorRef, testActor: ActorRef)
     extends ActorWithConnection with Actor {
 
+    println("Test (testActor = " + testActor + ", server = " + self + ") : server started.")
     testActor ! self
+    println("Test (testActor = " + testActor + ", server = " + self + ") : server has ref sent.")
 
     override def receive: Receive = parse orElse {
-      case Outer(m) => testActor ! m
-      case m: AppMessage => connection ==> m
-      case m => testActor ! m
+      case Outer(m) =>
+        println("Test (testActor = " + testActor + ", server = " + self + ") : server received outer message " + m)
+        testActor ! m
+      case m: AppMessage =>
+        println("Test (testActor = " + testActor + ", server = " + self + ") : server received inner message " + m)
+        connection ==> m
+      case m =>
+        println("Test (testActor = " + testActor + ", server = " + self + ") : server received unhandled message " + m)
+        testActor ! m
     }
 
   }

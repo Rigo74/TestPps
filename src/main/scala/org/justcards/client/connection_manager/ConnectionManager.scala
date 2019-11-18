@@ -31,17 +31,24 @@ abstract class AbstractConnectionManager(appController: ActorRef) extends ActorW
 
   private def waitForInit: Receive = {
     case InitializeConnection =>
+      println("Test (testActor = " + appController + ", CM = " + self + ") : cm received InitializeConnection ")
       initializeConnection()
       this become (init orElse stashUnhandled)
   }
 
   private def work(server: ActorRef): Receive = {
-    case m: AppMessage => server ==> m
-    case Outer(m: AppMessage) => appController ! m
+    case m: AppMessage =>
+      println("Test (testActor = " + appController + ", CM = " + self + ") : cm received inner message " + m)
+      server ==> m
+    case Outer(m: AppMessage) =>
+      println("Test (testActor = " + appController + ", CM = " + self + ") : cm received outer message " + m)
+      appController ! m
   }
 
   private def stashUnhandled: Receive = {
-    case _ => stash()
+    case m =>
+      println("Test (testActor = " + appController + ", CM = " + self + ") : cm received unhandled message " + m)
+      stash()
   }
 
   protected def error(message: AppError.Value): Unit = message match {

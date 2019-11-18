@@ -24,16 +24,23 @@ object TcpConnectionManager {
     override protected def initializeConnection(): Unit = IO(Tcp) ! Connect(address)
 
     override protected def init: Receive = {
-      case CommandFailed(_: Connect) => error(CANNOT_CONNECT)
-      case _ @ Connected(_, _) =>
+      case CommandFailed(m: Connect) =>
+        println("Test (testActor = " + appController + ", CM = " + self + ") : cm received command failed connect " + m)
+        error(CANNOT_CONNECT)
+      case m @ Connected(_, _) =>
+        println("Test (testActor = " + appController + ", CM = " + self + ") : cm connected " + m)
         val server = sender()
         server ! Register(self)
         connected(server)
     }
 
     override protected def connectionErrorHandling(server: ActorRef): Receive = {
-      case CommandFailed(_: Write) => error(MESSAGE_SENDING_FAILED)
-      case _: ConnectionClosed => error(CONNECTION_LOST)
+      case CommandFailed(w: Write) =>
+        println("Test (testActor = " + appController + ", CM = " + self + ") : cm received command failed write " + w)
+        error(MESSAGE_SENDING_FAILED)
+      case m: ConnectionClosed =>
+        println("Test (testActor = " + appController + ", CM = " + self + ") : cm received connection closed " + m)
+        error(CONNECTION_LOST)
     }
   }
 }
