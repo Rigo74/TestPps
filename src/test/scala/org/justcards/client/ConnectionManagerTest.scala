@@ -11,6 +11,7 @@ import org.justcards.commons.AppError._
 import org.justcards.commons._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.justcards.client.Utils._
+import org.justcards.commons.actor_connection.Outer
 
 class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAfterAll {
 
@@ -91,8 +92,8 @@ class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAft
 
   private def receiveMessageFromServerAndCheckItIsCorrectlyRedirectedToTheApplicationManager(message: AppMessage): Unit = {
     val (connectionManager,testProbe) = initComponents
-    val server = connectToServer(connectionManager, testProbe)
-    server ! message
+    connectToServer(connectionManager, testProbe)
+    connectionManager ! Outer(message)
     testProbe expectMsg message
   }
 
