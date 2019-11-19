@@ -94,8 +94,8 @@ object Server {
 
     override def receive: Receive = {
       case b @ Bound(_) =>
-        testActor ! ServerReady
         context.parent ! b
+        testActor ! ServerReady
       case CommandFailed(_: Bind) => context.stop(self)
       case _ @ Connected(_, _) =>
         val connection = sender()

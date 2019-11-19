@@ -16,7 +16,7 @@ import org.justcards.commons.actor_connection.Outer
 class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAfterAll {
 
   private implicit val system: ActorSystem = ActorSystem("ConnectionManagerTest")
-  private var nextAvailableServerPort = 6700
+  private var nextAvailableServerPort = 30000
 
   override def afterAll: Unit = {
     system.terminate()
@@ -92,8 +92,9 @@ class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAft
 
   private def receiveMessageFromServerAndCheckItIsCorrectlyRedirectedToTheApplicationManager(message: AppMessage): Unit = {
     val (connectionManager,testProbe) = initComponents
-    connectToServer(connectionManager, testProbe)
-    connectionManager ! Outer(message)
+    val server = connectToServer(connectionManager, testProbe)
+    //connectionManager ! Outer(message)
+    server ! message
     testProbe expectMsg message
   }
 
