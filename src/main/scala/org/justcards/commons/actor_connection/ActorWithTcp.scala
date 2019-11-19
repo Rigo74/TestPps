@@ -15,8 +15,12 @@ trait ActorWithTcp extends ActorWithConnection {
   }
 
   abstract override private[actor_connection] def tellWithConnection(actor: ActorRef, message: Any): Unit = message match {
-    case msg: AppMessage => super.tellWithConnection(actor,Write(msg))
-    case msg => super.tellWithConnection(actor,msg)
+    case msg: AppMessage =>
+      println("Test (actorWithTcp = " + self + ") : sending appMessage " + message)
+      super.tellWithConnection(actor,Write(msg))
+    case msg =>
+      println("Test (actorWithTcp = " + self + ") : sending " + message)
+      super.tellWithConnection(actor,msg)
   }
 }
 
