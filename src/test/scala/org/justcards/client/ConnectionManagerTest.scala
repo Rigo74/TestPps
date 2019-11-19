@@ -12,6 +12,7 @@ import org.justcards.commons._
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.justcards.client.Utils._
 import org.justcards.commons.actor_connection.Outer
+import scala.concurrent.duration._
 
 class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAfterAll {
 
@@ -95,7 +96,7 @@ class ConnectionManagerTest extends WordSpecLike with Matchers with BeforeAndAft
     val server = connectToServer(connectionManager, testProbe)
     //connectionManager ! Outer(message)
     server ! message
-    testProbe expectMsg message
+    testProbe expectMsg (5 seconds, message)
   }
 
   private def sendMessageToConnectionManagerAndCheckIfItIsCorrectlyRedirectedToTheServer(message: AppMessage): Unit = {
